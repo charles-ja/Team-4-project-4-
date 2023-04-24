@@ -1,0 +1,50 @@
+import pygame
+from constants import *
+from Cell import Cell
+from sudoku_generator import SudokuGenerator
+
+# Charles James Jr
+class Board:
+    # This class represents an entire Sudoku board. A Board object has 81 Cell objects.
+    def __init__(self, width, height, screen, difficulty):
+        self.rows = 9
+        self.cols = 9
+        self.width = width
+        self.height = height
+        self.screen = screen
+        self.difficulty = difficulty
+        x = SudokuGenerator(row_length=9, removed_cells=self.difficulty)
+        self.board = x.get_board()
+        self.cells = []
+        for i in range(9):
+            self.cells.append([Cell(self.board[i][j], i, j, self.height // self.rows,
+                                    self.width // self.cols) for j in range(9)])
+        self.selected = False
+    # Constructor for the Board class.
+    # screen is a window from PyGame.
+    # difficulty is a variable to indicate if the user chose easy, medium, or hard.
+    def draw(self):
+        # draw lines
+        for i in range(1, 9):
+            pygame.draw.line(self.screen, LINE_COLOR, (0, SQUARE_SIZE * i),
+                             (WIDTH, SQUARE_SIZE * i), LINE_WIDTH)
+        # draw vertical lines
+        for i in range(1, 9):
+            pygame.draw.line(self.screen, LINE_COLOR, (SQUARE_SIZE * i, 0),
+                             (SQUARE_SIZE * i, HEIGHT), LINE_WIDTH)
+        for i in range(self.width):
+            for j in range(self.height):
+                self.cells[i][j].draw(self.screen)
+
+    # Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes.
+    # Draws every cell on this board.
+    def select(self, row, col):
+        for i in self.cells:
+            for j in self.cells:
+                if i.row == row and j.col == col:
+                    self.selected = True
+                else:
+                    self.selected = False
+
+    # Marks the cell at (row, col) in the board as the current selected cell.
+    # Once a cell has been selected, the user can edit its value or sketched value.
