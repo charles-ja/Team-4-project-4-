@@ -1,6 +1,5 @@
 import pygame
-from constants import *
-from Cell import Cell
+from cell import Cell
 from sudoku_generator import SudokuGenerator
 
 # Charles James Jr
@@ -26,12 +25,19 @@ class Board:
     def draw(self):
         # draw lines
         for i in range(1, 9):
-            pygame.draw.line(self.screen, LINE_COLOR, (0, SQUARE_SIZE * i),
-                             (WIDTH, SQUARE_SIZE * i), LINE_WIDTH)
+            line_thickness = 10
+            if i % 3 == 0:
+                line_thickness = 15
+                pygame.draw.line(self.screen, (0, 0, 0), (0, 200 * i),
+                                 (600, 200 * i), line_thickness)
+            else:
+                pygame.draw.line(self.screen, (0, 0, 0), (0, 200 * i),
+                                 (600, 200 * i), line_thickness)
         # draw vertical lines
         for i in range(1, 9):
-            pygame.draw.line(self.screen, LINE_COLOR, (SQUARE_SIZE * i, 0),
-                             (SQUARE_SIZE * i, HEIGHT), LINE_WIDTH)
+            line_thickness = 10
+            pygame.draw.line(self.screen, (0, 0, 0), (200 * i, 0),
+                             (200 * i, 600), line_thickness)
         for i in range(self.width):
             for j in range(self.height):
                 self.cells[i][j].draw(self.screen)
