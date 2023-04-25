@@ -19,21 +19,21 @@ class SudokuGenerator:
     def valid_in_row(self, row, num):
         for i in range(9):
             if self.board[row][i] == num:
-                return True
-        return False
+                return False
+        return True
 
     def valid_in_col(self, col, num):
         for i in range(9):
             if self.board[i][col] == num:
-                return True
-        return False
+                return False
+        return True
 
     def valid_in_box(self, row_start, col_start, num):
         for i in range(3):
             for j in range(3):
                 if self.board[row_start + i][col_start + i] == num:
-                    return True
-        return False
+                    return False
+        return True
 
     def is_valid(self, row, col, num):
         for i in range(9):
