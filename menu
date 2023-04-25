@@ -1,0 +1,113 @@
+# written by Jackson Turnbull 4/25/23
+import pygame, sys
+from constants import *
+from board import Board
+
+
+def draw_game_start(screen):
+    pygame.display.set_caption("Sudoku")
+
+    # image upload
+    image = pygame.image.load("Sudoku.png")
+
+    # Initialize title font
+    start_title_font = pygame.font.Font(None, 70)
+    button_font = pygame.font.Font(None, 50)
+
+    screen.blit(image, (0, 0))
+
+    # Initialize and draw title
+    title_surface = start_title_font.render(" Sudoku ", True, MAROON, NAVY)
+    title_rectangle = title_surface.get_rect(
+        center=(WIDTH // 2, HEIGHT // 2 - 150))
+    screen.blit(title_surface, title_rectangle)
+
+    # Initialize buttons
+    Dif_1 = button_font.render("Easy", True, MAROON, BLACK)
+    Dif_2 = button_font.render("Medium", True, MAROON, BLACK)
+    Dif_3 = button_font.render("Hard", True, MAROON, BLACK)
+
+    Dif_1_rec = Dif_1.get_rect()
+    Dif_2_rec = Dif_2.get_rect()
+    Dif_3_rec = Dif_3.get_rect()
+
+    Dif_1_rec.center = (100, 500)
+    Dif_2_rec.center = (300, 500)
+    Dif_3_rec.center = (500, 500)
+
+    screen.blit(Dif_1, Dif_1_rec)
+    screen.blit(Dif_2, Dif_2_rec)
+    screen.blit(Dif_3, Dif_3_rec)
+
+    pygame.display.flip()
+
+    if __name__ == "__main__":
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if Dif_1_rec.collidepoint(event.pos):
+                        return 30
+
+                    elif Dif_2_rec.collidepoint(event.pos):
+                        return 40
+
+                    elif Dif_3_rec.collidepoint(event.pos):
+                        return 50
+
+
+def draw_game_over(screen, end_game):
+    # set image
+    image = pygame.image.load("Sudoku.png")
+    screen.blit(image, (0, 0))
+
+    # initialize buttons
+    button_font = pygame.font.Font(None, 70)
+
+    # render buttons
+    option_1 = button_font.render('Reset', True, MAROON, BLACK)
+    option_2 = button_font.render('Restart', True, MAROON, BLACK)
+    option_3 = button_font.render('Exit', True, MAROON, BLACK)
+
+    option_1_rec = option_1.get_rect()
+    option_2_rec = option_2.get_rect()
+    option_3_rec = option_3.get_rect()
+
+    option_1.center = (150, 500)
+    option_2.center = (400, 500)
+    option_3.center = (600, 500)
+
+    screen.blit(option_1, option_1_rec)
+    screen.blit(option_2, option_2_rec)
+    screen.blit(option_3, option_3_rec)
+
+    if end_game is True:
+        message = button_font.render("Game Won!", True, MAROON)
+        message_rec = message.get_rect()
+        message_rec.center = (200, 200)
+        option_3 = button_font.render('Exit', True, MAROON, BLACK)
+        option_3.center = (200, 500)
+        screen.blit(message, message_rec)
+        pygame.display.flip()
+    else:
+        message = button_font.render("Game Lost :(", True, MAROON)
+        message_rec = message.get_rect()
+        message_rec.center = (200, 200)
+        option_2 = button_font.render('Restart', True, MAROON, BLACK)
+        option_2.center = (200, 500)
+        screen.blit(message, message_rec)
+        pygame.display.flip()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if option_2_rec.collidepoint(event.pos):
+                    return 1
+
+                elif option_3_rec.collidepoint(event.pos):
+                    sys.exit()
+
