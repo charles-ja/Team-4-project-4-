@@ -1,32 +1,62 @@
 import pygame
-import sys
-from sudokugenerator import SudokuGenerator
+from Cell import Cell
+from sudoku_generator import SudokuGenerator
 from constants import *
 
-pygame.init()
-pygame.display.set_caption("Soduku")
-num_font = pygame.font.Font(None, 100)
-newvar = SudokuGenerator
-
-
+# Charles James Jr
 class Board:
-    def __init__(self, screen, width=600, height=600, difficulty=0):
+    # This class represents an entire Sudoku board. A Board object has 81 Cell objects.
+    def __init__(self, width, height, screen, difficulty):
+        self.rows = 9
+        self.cols = 9
         self.width = width
         self.height = height
         self.screen = screen
         self.difficulty = difficulty
-
+        x = SudokuGenerator(row_length=9, removed_cells=self.difficulty)
+        self.board = x.get_board()
+        self.cells = []
+        for i in range(9):
+            self.cells.append([Cell(self.board[i][j], i, j, self.height // self.rows,
+                                    self.width // self.cols) for j in range(9)])
+        self.selected = False
+    # Constructor for the Board class.
+    # screen is a window from PyGame.
+    # difficulty is a variable to indicate if the user chose easy, medium, or hard.
     def draw(self):
-        # screen = pygame.display.set_mode((self.width, self.height))
-        # screen.fill(BG_COLOR)
+        # draw lines
         for i in range(1, 9):
-            pygame.draw.line(self.screen, LINE_COLOR, (0, i * SQUARE_SIZE), (self.width, i * SQUARE_SIZE), LINE_WIDTH)
+            if i % 3 == 0:
+                pygame.draw.line(self.screen, LINE_COLOR, (0, SQUARE_SIZE * i),
+                                 (WIDTH, SQUARE_SIZE * i), LINE_WIDTH + 5)
+            else:
+                pygame.draw.line(self.screen, LINE_COLOR, (0, SQUARE_SIZE * i),
+                                 (WIDTH, SQUARE_SIZE * i), LINE_WIDTH)
+        # draw vertical lines
         for i in range(1, 9):
-            pygame.draw.line(self.screen, LINE_COLOR, (i * SQUARE_SIZE, 0), (SQUARE_SIZE * i, self.height), LINE_WIDTH)
-        pygame.display.update()
+            if i % 3 == 0:
+                pygame.draw.line(self.screen, LINE_COLOR, (SQUARE_SIZE * i, 0),
+                                 (SQUARE_SIZE * i, HEIGHT), LINE_WIDTH + 5)
+            else:
+                pygame.draw.line(self.screen, LINE_COLOR, (SQUARE_SIZE * i, 0),
+                                 (SQUARE_SIZE * i, HEIGHT), LINE_WIDTH)
+        for i in range(self.width):
+            for j in range(self.height):
+                self.cells[i][j].draw(self.screen)
 
+    # Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes.
+    # Draws every cell on this board.
     def select(self, row, col):
-        pass
+        for i in self.cells:
+            for j in self.cells:
+                if i.row == row and j.col == col:
+                    self.selected = True
+                else:
+                    self.selected = False
+
+    # Marks the cell at (row, col) in the board as the current selected cell.
+    # Once a cell has been selected, the user can edit its value or sketched value.
+       
 
     def click(self, x, y):
         self.x = x
