@@ -82,11 +82,10 @@ class Board:
         num_surf = num_font.render(str(value), False, CROSS_COLOR)
         for row in range(9):
             for col in range(9):
-                if self.board[row][col] == self.value:
-                    # if cell is selected, then execute
-                    num_location = num_surf.get_rect(center=(50, 50))
-                    self.screen.blit(num_surf, num_location)
-                pygame.display.update()
+                # if cell is selected, then execute
+                num_location = num_surf.get_rect(center=(50, 50))
+                self.screen.blit(num_surf, num_location)
+            pygame.display.update()
 
     def place_number(self, value):
         self.value = value
