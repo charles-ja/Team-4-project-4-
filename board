@@ -1,7 +1,9 @@
 import pygame
-from Cell import Cell
+from cell import Cell
 from sudoku_generator import SudokuGenerator
 from constants import *
+
+
 
 # Charles James Jr
 class Board:
@@ -20,6 +22,7 @@ class Board:
             self.cells.append([Cell(self.board[i][j], i, j, self.height // self.rows,
                                     self.width // self.cols) for j in range(9)])
         self.selected = False
+
     # Constructor for the Board class.
     # screen is a window from PyGame.
     # difficulty is a variable to indicate if the user chose easy, medium, or hard.
@@ -56,7 +59,6 @@ class Board:
 
     # Marks the cell at (row, col) in the board as the current selected cell.
     # Once a cell has been selected, the user can edit its value or sketched value.
-       
 
     def click(self, x, y):
         self.x = x
@@ -67,10 +69,11 @@ class Board:
         return x, y
 
     def clear(self):
-        for row in newvar.get_board():
+
+        for row in self.board:
             for col in row:
-                if newvar.get_board[row][col] == num:
-                    return 0
+                if col != 0 :
+                    return col == 0
 
     def sketch(self, value):
         self.value = value
@@ -78,12 +81,11 @@ class Board:
         num_surf = num_font.render(str(value), False, CROSS_COLOR)
         for row in range(9):
             for col in range(9):
-                if board.get_board()[row][col] == self.value:
-
-
+                if self.board[row][col] == self.value:
 
     def place_number(self, value):
         self.value = value
+        num_font = pygame.font.Font(None, 50)
         num_surf = num_font.render(str(value), False, CROSS_COLOR)
         for row in range(9):
             for col in range(9):
@@ -99,15 +101,17 @@ class Board:
     def is_full(self):
         for row in self.board:
             for col in row:
-                if col == num:
+                if col != 0:
                     return False
         return True
 
-    def update_board(self):
-        for row in self.board:
-            for col in row:
-                if self.board[row][col] == num:
-
+    def update_board(self, value):
+        ind = Cell.set_cell_value(value)
+        pic = Cell.set_sketched_value(value)
+        for i in self.cells:
+            for j in i:
+                if j != ind and pic:
+                    self.board
 
     def find_empty(self):
         for row in range(9):
