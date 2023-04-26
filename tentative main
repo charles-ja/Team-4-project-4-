@@ -28,4 +28,107 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
+    
+    # tentative class
+    import pygame
+from cell import Cell
+import sys
+from sudokugenerator import SudokuGenerator
+from constants import *
+
+pygame.init()
+pygame.display.set_caption("Soduku")
+num_font = pygame.font.Font(None, 100)
+gen = SudokuGenerator
+
+
+class Board:
+    def __init__(self, screen, width=600, height=600, difficulty=0):
+        self.width = width
+        self.height = height
+        self.screen = screen
+        self.difficulty = difficulty
+        self.current_board = gen(9, 2)
+        # self.board = self.current_board.board
+
+    def draw(self):
+        # screen = pygame.display.set_mode((self.width, self.height))
+        # screen.fill(BG_COLOR)
+        for i in range(1, 9):
+            pygame.draw.line(self.screen, LINE_COLOR, (0, i * SQUARE_SIZE), (self.width, i * SQUARE_SIZE), LINE_WIDTH)
+        for i in range(1, 9):
+            pygame.draw.line(self.screen, LINE_COLOR, (i * SQUARE_SIZE, 0), (SQUARE_SIZE * i, self.height), LINE_WIDTH)
+        pygame.display.update()
+
+    def select(self, row, col):
+        pass
+
+    def click(self, x, y):
+        self.x = x
+        self.y = y
+        row = y // SQUARE_SIZE
+        col = x // SQUARE_SIZE
+        if y >= 500:
+            return None
+        else:
+            return self.select(row, col)
+
+    def clear(self):
+        for row in self.board:
+            for col in row:
+                if col != 0:
+                    return self.board[row][col] == 0
+
+    def sketch(self, value):
+        self.value = value
+        num_font = pygame.font.Font(None, 50)
+        num_surf = num_font.render(str(value), False, CROSS_COLOR)
+        for row in range(9):
+            for col in range(9):
+                # if cell is selected, then execute
+                num_location = num_surf.get_rect(center=(50, 50))
+                self.screen.blit(num_surf, num_location)
+            pygame.display.update()
+
+    def place_number(self, value):
+        self.value = value
+        num_surf = num_font.render(str(value), False, CROSS_COLOR)
+        for row in range(9):
+            for col in range(9):
+                # if cell is selected, then execute
+                num_location = num_surf.get_rect(center=(col * SQUARE_SIZE + SQUARE_SIZE // 2,
+                                                         row * SQUARE_SIZE + SQUARE_SIZE // 2))
+                self.screen.blit(num_surf, num_location)
+            pygame.display.update()
+
+    def reset_to_original(self):
+        return self.board.get_board()
+
+    def is_full(self):
+        for row in self.board:
+            for col in row:
+                if col != 0:
+                    return False
+        return True
+
+    def update_board(self):
+        current_board = gen.get_board()
+        for i in self.board:
+            for j in i:
+                if j != self.board:
+                    self.board = current_board[i][j]
+
+    def find_empty(self):
+        for row in range(9):
+            for col in range(9):
+                if self.board.get_board() == 0:
+                    return self.x, self.y
+        return None
+
+    def check_board(self):
+        if self.board.is_valid() and self.board.valid_in_box() and self.board.valid_in_row() and \
+                self.board.valid_in_col() is True:
+            return True
+        return False
 
