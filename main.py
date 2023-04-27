@@ -9,5 +9,12 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                board_object.place_number(4)
+            if event.key == pygame.K_s:
+                board_object.sketch(5)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            (x, y) = event.pos
+            board_object.click(x, y)
     pygame.display.update()
