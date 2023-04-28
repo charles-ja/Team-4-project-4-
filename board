@@ -23,7 +23,8 @@ class Board:
         for i in range(9):
             for j in range(9):
                 self.cells.append([Cell(self.board[i][j], i, j, self.screen)])
-        self.selected = False
+        self.selected = None
+        self.chosen = False
 
     # Constructor for the Board class.
     # screen is a window from PyGame.
@@ -58,55 +59,100 @@ class Board:
     def select(self, row, col):
         for i in self.board:
             for j in i:
-                if j == self.board[row][col]:
-                    self.selected = True
-                    pygame.draw.rect(self.screen, (255, 255, 0), pygame.Rect((self.x - 33, self.y - 33), (67, 67)), width=5)
+                if j == self.board[row][col] and j == 0:
+                    self.chosen = True
+                    if self.chosen is True:
+                        self.selected = (row, col)
+#                    //pygame.draw.rect(self.screen, YELLOW, pygame.Rect((self.x * SQUARE_SIZE, self.y * SQUARE_SIZE), (67, 67)), width=5)
+                        pygame.draw.rect(self.screen, YELLOW, pygame.Rect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), width=3)
+        self.chosen = False
+
+
+
         pygame.display.update()
 
     # Marks the cell at (row, col) in the board as the current selected cell.
     # Once a cell has been selected, the user can edit its value or sketched value.
 
     def click(self, x, y):
+        self.chosen = True
         self.x = x
         self.y = y
         row = y // SQUARE_SIZE
         col = x // SQUARE_SIZE
-        if y >= 500:
+        if y >= 600:
             return None
-        else:
+        elif 0 <= col <= 8 and 0 <= row <= 8:
             print(row, col)
             return self.select(row, col)
 
     def clear(self):
-        for row in self.board:
-            for col in row:
-                if col != 0:
-                    return self.board[row][col] == 0
+        if self.chosen is False:
+            return self.draw()
+        pygame.display.update()
 
     def sketch(self, value):
+        self.chosen = True
         self.value = value
         num_font = pygame.font.SysFont("Times New Roman", 25)
         num_surf = num_font.render(str(value), False, "Gray")
-        for row in range(9):
-            for col in range(9):
+        row, col = self.selected
                 # if cell is selected, then execute
-                num_location = num_surf.get_rect(center=(self.x - 15, self.y - 15))
-                self.screen.blit(num_surf, num_location)
-            pygame.display.update()
+        num_location = num_surf.get_rect(center=(col * SQUARE_SIZE + SQUARE_SIZE // 4,
+                                                 row * SQUARE_SIZE + SQUARE_SIZE // 2))
+        self.screen.blit(num_surf, num_location)
+        pygame.display.update()
+
+    def sketch_white(self, value):
+        self.chosen = True
+        self.value = value
+        num_font = pygame.font.SysFont("Times New Roman", 25)
+        num_surf = num_font.render(str(value), False, "White")
+        row, col = self.selected
+        # if cell is selected, then execute
+        num_location = num_surf.get_rect(center=(col * SQUARE_SIZE + SQUARE_SIZE // 4,
+                                                 row * SQUARE_SIZE + SQUARE_SIZE // 2))
+        self.screen.blit(num_surf, num_location)
+        pygame.display.update()
 
     def place_number(self, value):
+        # self.value = value
+        # num_font = pygame.font.SysFont("Times New Roman", 30)
+        # num_surf = num_font.render(str(value), False, CROSS_COLOR)
+        # x, y = self.selected
+        # for row in range(9):
+        #     for col in range(9):
+        #         if row == x and col == y:
+        #             # if cell is selected, then execute
+        #             num_location = num_surf.get_rect(center=(col * SQUARE_SIZE + SQUARE_SIZE // 2,
+        #                                                      row * SQUARE_SIZE + SQUARE_SIZE // 2))
+        #             self.screen.blit(num_surf, num_location)
+        #             pygame.display.update()
+        #             self.numlist.append(value)\
         self.value = value
         num_font = pygame.font.SysFont("Times New Roman", 30)
         num_surf = num_font.render(str(value), False, CROSS_COLOR)
-        for row in range(9):
-            for col in range(9):
-                if self.selected is True:
-                    # if cell is selected, then execute
-                    num_location = num_surf.get_rect(center=(col * SQUARE_SIZE + SQUARE_SIZE // 2,
-                                                             row * SQUARE_SIZE + SQUARE_SIZE // 2))
-                    self.screen.blit(num_surf, num_location)
-                    pygame.display.update()
-                    self.numlist.append(value)
+        row, col = self.selected
+
+        # if cell is selected, then execute
+        num_location = num_surf.get_rect(center=(col * SQUARE_SIZE + SQUARE_SIZE // 2,
+                                                 row * SQUARE_SIZE + SQUARE_SIZE // 2))
+        self.screen.blit(num_surf, num_location)
+        pygame.display.update()
+        self.numlist.append(value)
+
+    def place_white(self, value):
+        self.value = value
+        num_font = pygame.font.SysFont("Times New Roman", 30)
+        num_surf = num_font.render(str(value), False, "White")
+        row, col = self.selected
+
+        # if cell is selected, then execute
+        num_location = num_surf.get_rect(center=(col * SQUARE_SIZE + SQUARE_SIZE // 2,
+                                                 row * SQUARE_SIZE + SQUARE_SIZE // 2))
+        self.screen.blit(num_surf, num_location)
+        pygame.display.update()
+        self.numlist.append(value)
 
     def is_full(self):
         for row in self.board:
@@ -121,6 +167,12 @@ class Board:
             for j in i:
                 if j != self.board:
                     self.board = current_board[i][j]
+
+    def reset_to_original(self):
+        for row in self.board:
+            for col in row:
+                if col != 0:
+                    return self.board[row][col] == 0
 
     def find_empty(self):
         for row in range(9):
