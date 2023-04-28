@@ -1,55 +1,57 @@
-from board import Board
-from cell import Cell
-from menu import *
-import pygame, sys
-from constants import *
-from sudokugenerator import SudokuGenerator
-
-
 def main():
-
     pygame.init()
     screen = pygame.display.set_mode((600, 600))
-    screen.fill(BG_COLOR)
-    board_object = Board(screen, 600, 600)
-    board_object.draw()
+    start_title_font = pygame.font.Font(None, 70)
+    pygame.display.set_caption("Sudoku")
+
+    # image upload
+    image = pygame.image.load("Sudoku.png")
+    button_font = pygame.font.Font(None, 50)
+
+    screen.blit(image, (0, 0))
+
+    # Initialize and draw title
+    title_surface = start_title_font.render(" Sudoku ", True, MAROON, NAVY)
+    title_rectangle = title_surface.get_rect(
+        center=(WIDTH // 2, HEIGHT // 2 - 150))
+    screen.blit(title_surface, title_rectangle)
+    Dif_1 = button_font.render("Easy", True, MAROON, BLACK)
+    Dif_2 = button_font.render("Medium", True, MAROON, BLACK)
+    Dif_3 = button_font.render("Hard", True, MAROON, BLACK)
+
+    Dif_1_rec = Dif_1.get_rect()
+    Dif_2_rec = Dif_2.get_rect()
+    Dif_3_rec = Dif_3.get_rect()
+
+    Dif_1_rec.center = (100, 500)
+    Dif_2_rec.center = (300, 500)
+    Dif_3_rec.center = (500, 500)
+
+    screen.blit(Dif_1, Dif_1_rec)
+    screen.blit(Dif_2, Dif_2_rec)
+    screen.blit(Dif_3, Dif_3_rec)
+
+    pygame.display.flip()
 
     while True:
-
-        board_object = Board(600, 600, screen, difficulty=30)
-        if board_object.difficulty == 30:
-            removed_cell = 30
-        elif board_object.difficulty == 40:
-            removed_cell = 40
-        elif board_object.difficulty == 50:
-            removed_cell = 50
-
-        boardlist = SudokuGenerator(9, removed_cell)
-        boardlist.fill_box(0, 0)
-        boardlist.fill_remaining(3, 0)
-        boardlist.remove_cells()
-
-        print(boardlist.board)
-
-        for i in range(9):
-            for j in range(9):
-                board_object.sketch(boardlist.board[i][j])
-
-        pygame.display.update()
-
+        draw_game_start(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
                 sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    board_object.place_number(4)
-                if event.key == pygame.K_s:
-                    board_object.sketch(5)
             if event.type == pygame.MOUSEBUTTONDOWN:
-                (x, y) = event.pos
-                board_object.click(x, y)
-    # board_object.sketch(8)
+                if Dif_1_rec.collidepoint(event.pos):
+                    return 30
 
+                elif Dif_2_rec.collidepoint(event.pos):
+                    return 40
 
-main()
+                elif Dif_3_rec.collidepoint(event.pos):
+                    return 50
+        pygame.display.update()
+
+    screen.fill(BG_COLOR)
+    board_object = Board(1, 1, screen, difficulty=30)
+    cell = Cell(0, 9, 9, screen)
+    sud_gen = SudokuGenerator(9, 30)
+    board_object.draw()
+    pygame.display.update()
